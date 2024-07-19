@@ -1,6 +1,6 @@
 package model
 
-class CreateBookingResponse {
-    var bookingid = 0
-    var booking: BookingResponse? = null
-}
+data class CreateBookingResponse(
+    var bookingid: Int,
+    var booking: BookingResponse
+)

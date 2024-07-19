@@ -1,12 +1,12 @@
 package model
 
 data class BookingRequest (
-    var firstname: String? = null,
-    var lastname: String? = null,
-    var totalprice: Int = 0,
-    var depositpaid: Boolean = false,
-    var bookingdates: Bookingdates? = null,
-    var additionalneeds: String? = null,
+    var firstname: String,
+    var lastname: String,
+    var totalprice: Int,
+    var depositpaid: Boolean,
+    var bookingdates: Bookingdates,
+    var additionalneeds: String,
 )
 
 

@@ -1,5 +1,5 @@
 package model
 
-class AuthResponse {
-    var token: String? = null
-}
+data class AuthResponse (
+    val token: String
+)

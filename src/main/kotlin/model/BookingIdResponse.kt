@@ -1,5 +1,5 @@
 package model
 
-class BookingIdResponse {
-    var bookingid = 0
-}
+data class BookingIdResponse(
+    val bookingid: Int
+)

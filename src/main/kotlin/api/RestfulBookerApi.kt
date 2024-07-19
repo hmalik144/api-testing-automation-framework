@@ -6,19 +6,15 @@ import retrofit2.http.*
 
 interface RestfulBookerApi {
 
-    @Headers("Content-Type:application/json")
+    @Headers("Content-Type:application/json", "Accept: application/json")
     @POST("auth")
     suspend fun createAuthToken(
-        @Field("username") username: String,
-        @Field("password") password: String,
+        @Body authRequest: AuthRequest
     ): Response<AuthResponse>
 
     @GET("booking")
     suspend fun getBookingIds(
-        @Field("firstname") firstname: String? = null,
-        @Field("lastname") lastname: String? = null,
-        @Field("checkin") checkin: String? = null,
-        @Field("checkout") checkout: String? = null,
+
     ): Response<List<BookingIdResponse>>
 
     @GET("booking/{id}")
@@ -26,7 +22,7 @@ interface RestfulBookerApi {
         @Path("id") id: String
     ): Response<BookingResponse>
 
-    @Headers("Content-Type:application/json")
+    @Headers("Content-Type:application/json", "Accept: application/json")
     @POST("booking")
     suspend fun createBooking(
         @Body booking: BookingRequest,
@@ -45,17 +41,12 @@ interface RestfulBookerApi {
     suspend fun partialUpdateBooking(
         @Path("id") id: String,
         @Header("Authorization") token: String,
-        @Field("firstname") firstname: String? = null,
-        @Field("lastname") lastname: String? = null,
-        @Field("totalprice") totalprice: Float? = null,
-        @Field("depositpaid") depositpaid: Boolean? = null,
-        @Field("checkin") checkin: String? = null,
-        @Field("checkout") checkout: String? = null,
-        @Field("additionalneeds") additionalneeds: String? = null
+        @Body update: UpdateBookingRequest
     ): Response<BookingResponse>
 
     @DELETE("booking/{id}")
     suspend fun deleteBooking(
-        @Path("id") id: String
+        @Path("id") id: String,
+        @Header("Authorization") token: String
     ): Response<Any>
 }
