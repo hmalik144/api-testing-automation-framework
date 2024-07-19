@@ -1,4 +1,4 @@
-package utils
+package org.example.utils
 
 import com.google.gson.Gson
 import java.io.BufferedReader

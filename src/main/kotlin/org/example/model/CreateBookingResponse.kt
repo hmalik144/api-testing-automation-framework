@@ -1,4 +1,4 @@
-package model
+package org.example.model
 
 data class CreateBookingResponse(
     var bookingid: Int,

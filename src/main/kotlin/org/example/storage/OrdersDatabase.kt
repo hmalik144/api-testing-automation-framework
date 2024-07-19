@@ -1,7 +1,7 @@
-package storage
+package org.example.storage
 
-import model.BookingResponse
-import model.Bookingdates
+import org.example.model.BookingResponse
+import org.example.model.Bookingdates
 
 class OrdersDatabase {
     private val storage = mutableMapOf<Int, BookingResponse>()

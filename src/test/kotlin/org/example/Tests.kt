@@ -1,22 +1,17 @@
-import api.BookerApi
-import api.RestfulBookerApi
-import model.AuthRequest
-import model.BookingRequest
-import model.Bookingdates
-import model.UpdateBookingRequest
-import net.sf.jasperreports.engine.JasperCompileManager
-import net.sf.jasperreports.engine.JasperFillManager
-import net.sf.jasperreports.engine.JasperReport
-import net.sf.jasperreports.engine.export.HtmlExporter
-import net.sf.jasperreports.engine.util.JRSaver
-import net.sf.jasperreports.export.SimpleHtmlExporterOutput
+package org.example
+
+import org.example.api.BookerApi
+import org.example.api.RestfulBookerApi
+import org.example.model.AuthRequest
+import org.example.model.BookingRequest
+import org.example.model.Bookingdates
+import org.example.model.UpdateBookingRequest
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.message.MessageFormatMessage
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.*
-import storage.OrdersDatabase
-import utils.FileReader
-import java.io.InputStream
+import org.example.storage.OrdersDatabase
+import org.example.utils.FileReader
 import java.util.*
 
 
@@ -26,10 +21,7 @@ class Tests : NetworkTests() {
     companion object {
         private lateinit var bookerApi: RestfulBookerApi
         private val fileReader = FileReader()
-        private val logger = LogManager.getLogger("Test")
-
-        val bookingsReportStream: InputStream = javaClass.getResourceAsStream("/bookingsReport.jrxml")
-        val jasperReport: JasperReport = JasperCompileManager.compileReport(bookingsReportStream)
+        private val logger = LogManager.getLogger(Tests::javaClass)
 
         private val storage = OrdersDatabase()
 
@@ -49,8 +41,6 @@ class Tests : NetworkTests() {
         @JvmStatic
         internal fun afterAll() {
             storage.clearAllData()
-
-            JRSaver.saveObject(jasperReport, "bookingReport.jasper");
         }
     }
 
@@ -89,13 +79,13 @@ class Tests : NetworkTests() {
         /*
          * Then
          */
-        val bookingIds = responseUnwrap { bookerApi.getBookingIds() }
-        assertThat(bookingIds.size)
+        val bookingIdsResponse = responseUnwrap { bookerApi.getBookingIds() }
+        assertThat(bookingIdsResponse.size)
             .withFailMessage("Did not find 3 bookings")
             .isGreaterThanOrEqualTo(3)
+        val bookingIds = bookingIdsResponse.map { it.bookingid }.joinToString()
 
-        JasperFillManager.
-        logger.trace("Available booking IDs: ${bookingIds.joinToString()}")
+        logger.info("Available booking IDs: $bookingIds")
 
         // Add the booking details and idea for later
         bookingResponses.forEach { response ->
@@ -178,14 +168,14 @@ class Tests : NetworkTests() {
         /*
          * Then
          */
-        logger.trace(
+        logger.info(
             MessageFormatMessage(
                 "Booking with ID: {0} has been updated to the following: {1}",
                 orderIdTestOne,
                 updateTestOneResponse
             )
         )
-        logger.trace(
+        logger.info(
             MessageFormatMessage(
                 "Booking with ID: {0} has been updated to the following: {1}",
                 orderIdTestTwo,
@@ -215,7 +205,7 @@ class Tests : NetworkTests() {
         /*
          * Then
          */
-        logger.trace(
+        logger.info(
             MessageFormatMessage(
                 "Booking with ID: {0} has been delete and given the following response: {1}",
                 idOfAny,
@@ -238,13 +228,5 @@ class Tests : NetworkTests() {
         /*
          * Then
          */
-        val exporter = HtmlExporter()
-
-// Set input ...
-
-// Set input ...
-        exporter.exporterOutput = SimpleHtmlExporterOutput("bookingsReport.html")
-
-        exporter.exportReport()
     }
 }
