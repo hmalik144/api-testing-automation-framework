@@ -162,6 +162,9 @@ class Tests : BaseNetworkTests() {
         )
     }
 
+    /**
+     * 3.      Delete one of the booking --> Log return status to same file
+     */
     @Test()
     @Order(3)
     fun testScenarioThree() {
@@ -192,6 +195,9 @@ class Tests : BaseNetworkTests() {
         )
     }
 
+    /**
+     * 4.      Present the data in log file as html report.
+     */
     @Test()
     @Order(4)
     fun testScenarioFour() {
