@@ -36,7 +36,6 @@ class BookerApi {
         .setLenient()
         .create()
 
-
     private fun buildOkHttpClient(timeoutSeconds: Long = 30L): OkHttpClient {
         val builder = OkHttpClient.Builder()
 

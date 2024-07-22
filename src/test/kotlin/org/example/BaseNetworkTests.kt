@@ -1,10 +1,16 @@
 package org.example
 
+import io.github.cdimascio.dotenv.dotenv
 import kotlinx.coroutines.runBlocking
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.message.MessageFormatMessage
 import retrofit2.Response
 import java.io.IOException
 
-abstract class NetworkTests {
+abstract class BaseNetworkTests {
+    private val logger = LogManager.getLogger(Tests::javaClass)
+
+    private val env by lazy { dotenv() }
 
     // Call retrofit API and unwrap response or throw exception
     fun <T : Any> responseUnwrap(
@@ -22,4 +28,8 @@ abstract class NetworkTests {
         }
     }
 
+    fun getStoredVariable(key: String) = env.get(key)
+
+    fun logMessage(logMessage: String) = logger.info(logMessage)
+    fun logMessage(logMessage: MessageFormatMessage) = logger.info(logMessage)
 }

@@ -2,10 +2,8 @@ package org.example.utils
 
 import com.google.gson.Gson
 import java.io.BufferedReader
-import java.lang.reflect.ParameterizedType
-import kotlin.reflect.KClass
 
-class FileReader {
+class TestHelper {
 
     private val gson by lazy { Gson() }
 
@@ -18,4 +16,6 @@ class FileReader {
         val data = iStream.bufferedReader().use(BufferedReader::readText)
         return gson.fromJson(data, clazz)
     }
+
+    fun toJsonString(any: Any) = gson.toJson(any)
 }

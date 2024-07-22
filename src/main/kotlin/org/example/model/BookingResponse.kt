@@ -7,5 +7,5 @@ data class BookingResponse(
     var totalprice: Int,
     var depositpaid: Boolean,
     var bookingdates: Bookingdates,
-    var additionalneeds: String
+    var additionalneeds: String?
 )

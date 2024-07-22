@@ -33,20 +33,20 @@ interface RestfulBookerApi {
     suspend fun updateBooking(
         @Path("id") id: String,
         @Body booking: BookingRequest,
-        @Header("Authorization") token: String
+        @Header("Authorization") basicHeaderToken: String
     ): Response<BookingResponse>
 
     @Headers("Content-Type:application/json", "Accept: application/json")
     @PATCH("booking/{id}")
     suspend fun partialUpdateBooking(
         @Path("id") id: String,
-        @Header("Authorization") token: String,
+        @Header("Authorization") basicHeaderToken: String,
         @Body update: UpdateBookingRequest
     ): Response<BookingResponse>
 
     @DELETE("booking/{id}")
     suspend fun deleteBooking(
         @Path("id") id: String,
-        @Header("Authorization") token: String
+        @Header("Authorization") basicHeaderToken: String
     ): Response<Any>
 }

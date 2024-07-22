@@ -2,26 +2,25 @@ package org.example
 
 import org.example.api.BookerApi
 import org.example.api.RestfulBookerApi
-import org.example.model.AuthRequest
 import org.example.model.BookingRequest
-import org.example.model.Bookingdates
 import org.example.model.UpdateBookingRequest
-import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.message.MessageFormatMessage
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
+import org.example.api.createBasicAuthTokenForHeader
 import org.junit.jupiter.api.*
 import org.example.storage.OrdersDatabase
-import org.example.utils.FileReader
+import org.example.utils.TestHelper
+import org.example.utils.PASSWORD_KEY
+import org.example.utils.USERNAME_KEY
 import java.util.*
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-class Tests : NetworkTests() {
+class Tests : BaseNetworkTests() {
 
     companion object {
         private lateinit var bookerApi: RestfulBookerApi
-        private val fileReader = FileReader()
-        private val logger = LogManager.getLogger(Tests::javaClass)
+        private val testHelper = TestHelper()
 
         private val storage = OrdersDatabase()
 
@@ -33,8 +32,8 @@ class Tests : NetworkTests() {
         internal fun beforeAll() {
             bookerApi = BookerApi().invoke()
 
-            bookingRequestTestOne = fileReader.readJsonFileFromResources("test1", BookingRequest::class.java)
-            bookingRequestTestTwo = fileReader.readJsonFileFromResources("test2", BookingRequest::class.java)
+            bookingRequestTestOne = testHelper.readJsonFileFromResources("test1", BookingRequest::class.java)
+            bookingRequestTestTwo = testHelper.readJsonFileFromResources("test2", BookingRequest::class.java)
         }
 
         @AfterAll
@@ -56,17 +55,7 @@ class Tests : NetworkTests() {
         /*
          * Given
          */
-        val bookingRequestThree = BookingRequest(
-            firstname = "Mark",
-            lastname = "Wahlberg",
-            totalprice = 750,
-            depositpaid = true,
-            bookingdates = Bookingdates(
-                checkin = "2025-01-01",
-                checkout = "2025-01-10"
-            ),
-            additionalneeds = "Breakfast"
-        )
+        val bookingRequestThree = testHelper.readJsonFileFromResources("test3", BookingRequest::class.java)
 
         /*
          * When
@@ -85,17 +74,17 @@ class Tests : NetworkTests() {
             .isGreaterThanOrEqualTo(3)
         val bookingIds = bookingIdsResponse.map { it.bookingid }.joinToString()
 
-        logger.info("Available booking IDs: $bookingIds")
+        logMessage("Available booking IDs: $bookingIds")
 
         // Add the booking details and idea for later
         bookingResponses.forEach { response ->
             storage.insertBooking(response.bookingid, response.booking)
 
-            logger.trace(
+            logMessage(
                 MessageFormatMessage(
                     "Booking with ID: {0} has been added: {1}",
                     response.bookingid,
-                    response.booking
+                    testHelper.toJsonString(response.booking)
                 )
             )
         }
@@ -130,21 +119,11 @@ class Tests : NetworkTests() {
         /*
          * When
          */
-        val auth = responseUnwrap {
-            bookerApi.createAuthToken(
-                AuthRequest(
-                    UUID.randomUUID().toString(),
-                    UUID.randomUUID().toString()
-                )
-            )
-        }
-        val tokenBuilder =
-            StringBuilder("Basic ").append(Base64.getEncoder().encodeToString("admin:password123".toByteArray()))
-                .toString()
+        val tokenBuilder = buildBasicAuthToken()
         val updateTestOneResponse = responseUnwrap {
             bookerApi.partialUpdateBooking(
                 id = orderIdTestOne.toString(),
-                token = tokenBuilder,
+                basicHeaderToken = tokenBuilder,
                 update = UpdateBookingRequest(
                     totalprice = 1000
                 )
@@ -155,7 +134,7 @@ class Tests : NetworkTests() {
         val updateTestTwoResponse = responseUnwrap {
             bookerApi.partialUpdateBooking(
                 id = orderIdTestTwo.toString(),
-                token = tokenBuilder,
+                basicHeaderToken = tokenBuilder,
                 update = UpdateBookingRequest(
                     totalprice = 1500
                 )
@@ -163,23 +142,22 @@ class Tests : NetworkTests() {
         }.also {
             storage.updateCompleteOrder(orderIdTestTwo, it)
         }
-        val updateResponseList = listOf(updateTestOneResponse, updateTestTwoResponse)
 
         /*
          * Then
          */
-        logger.info(
+        logMessage(
             MessageFormatMessage(
                 "Booking with ID: {0} has been updated to the following: {1}",
                 orderIdTestOne,
-                updateTestOneResponse
+                testHelper.toJsonString(updateTestOneResponse)
             )
         )
-        logger.info(
+        logMessage(
             MessageFormatMessage(
                 "Booking with ID: {0} has been updated to the following: {1}",
                 orderIdTestTwo,
-                updateTestTwoResponse
+                testHelper.toJsonString(updateTestTwoResponse)
             )
         )
     }
@@ -205,11 +183,11 @@ class Tests : NetworkTests() {
         /*
          * Then
          */
-        logger.info(
+        logMessage(
             MessageFormatMessage(
                 "Booking with ID: {0} has been delete and given the following response: {1}",
                 idOfAny,
-                deleteResponse
+                testHelper.toJsonString(deleteResponse)
             )
         )
     }
@@ -220,6 +198,7 @@ class Tests : NetworkTests() {
         /*
          * Given
          */
+        println("The log4j library will create the report in the root of the folder")
 
         /*
          * When
@@ -228,5 +207,15 @@ class Tests : NetworkTests() {
         /*
          * Then
          */
+    }
+
+    /**
+     * build a basic header token needed for using end points like partial update
+     */
+    private fun buildBasicAuthToken(): String {
+        val username = getStoredVariable(USERNAME_KEY)
+        val password = getStoredVariable(PASSWORD_KEY)
+
+        return createBasicAuthTokenForHeader(username, password)
     }
 }
