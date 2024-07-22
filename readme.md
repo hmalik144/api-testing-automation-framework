@@ -6,7 +6,6 @@ This repository contains an Automation API Testing Framework built with Kotlin a
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Project Structure](#project-structure)
-- [Configuration](#configuration)
 - [Prerequisites for Testing](#prerequisites-for-testing)
 - [Running Tests](#running-tests)
 - [Reporting](#reporting)
@@ -60,9 +59,6 @@ automation-api-testing-framework
 - `model`: data classes of the responses and requests for api.
 - `storage`: caching class for storing api data.
 - `utils`: Helper functions and utilities.
-
-## Configuration
-Configuration files are located in the `src/main/kotlin/com/yourpackage/config` directory. Modify the configuration files as per your testing environment.
 
 ## Prerequisites for Testing
 ### Create a .env File
