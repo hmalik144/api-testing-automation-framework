@@ -1,6 +1,6 @@
 # Automation API Testing Framework
 
-This repository contains an Automation API Testing Framework built with Kotlin and Maven. The framework is designed to provide a robust, scalable, and maintainable structure for automated testing of RESTful APIs.
+This repository contains an Automation API Testing Framework built with Kotlin and Maven. The framework is designed to provide automated testing of RESTful API at https://restful-booker.herokuapp.com/.
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
