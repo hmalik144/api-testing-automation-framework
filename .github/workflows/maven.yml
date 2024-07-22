@@ -34,11 +34,10 @@ jobs:
         touch .env
         echo API_USERNAME=admin >> .env
         echo API_PASSWORD=password123 >> .env
-        cat .env
     - name: Run JUnit tests
       run: mvn clean test
     - name: Archive test output
       uses: actions/upload-artifact@v4
       with:
         name: test-output-report
-        path: app-info.html
+        path: ./app-info.html
